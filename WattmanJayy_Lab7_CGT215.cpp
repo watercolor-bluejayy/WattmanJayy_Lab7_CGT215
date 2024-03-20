@@ -2,10 +2,58 @@
 //
 
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFPhysics.h>
+
+using namespace std;
+using namespace sf;
+using namespace sfp;
+
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    //create window and world with gravity 0,1
+    RenderWindow window(VideoMode(800, 600), "Bounce");
+    World world(Vector2f(0, 1));
+
+    //create the ball so we have something to bounce
+    PhysicsCircle ball;
+    ball.setCenter(Vector2f(400, 300)); //remember that in SFPhysics we orient from the center
+    ball.setRadius(20); //set the size of the ball
+    world.AddPhysicsBody(ball); //adds ball to world so it can be affected by the gravity and such
+
+    //create the floor
+    PhysicsRectangle floor;
+    floor.setSize(Vector2f(800, 20));
+    floor.setCenter(Vector2f(400, 590));
+    floor.setStatic(true); //makes sure that the floor doesn't move
+    world.AddPhysicsBody(floor);
+
+    int thudCount(0);
+    floor.onCollision = [&thudCount](PhysicsBodyCollisionResult result) // use an anonymus function with a reference to thudCount
+        {
+            cout << "thud " << thudCount << endl;
+            thudCount++; //increment the thud count
+        };
+
+    Clock clock;
+    Time lastTime(clock.getElapsedTime());
+    while (true) 
+    {
+        //calculate milliseconds since last frame
+        Time currentTime(clock.getElapsedTime());
+        Time deltaTime(currentTime - lastTime); 
+        int deltaTimeMS(deltaTime.asMilliseconds());
+        if (deltaTimeMS > 0) 
+        {
+            world.UpdatePhysics(deltaTimeMS);
+            lastTime = currentTime;
+        }
+        window.clear(Color(0, 0, 0));
+        window.draw(ball); 
+        window.draw(floor);
+        window.display();
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
