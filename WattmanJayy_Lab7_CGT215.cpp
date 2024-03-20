@@ -82,9 +82,18 @@ int main()
             thudCount++; //increment the thud count
         };
 
+    //adding font and text for exit message
+    Text text;
+    Font font;
+    if (!font.loadFromFile("arial.ttf")) 
+    {
+        cout << "Couldn't load font for exit message" << endl;
+        exit(2);
+    }
+
     //to differentiate between walls and the obstacle a new "sound" is needed
     int bangCount(0);
-    obstacle.onCollision = [&bangCount, &obstacle, &window](PhysicsBodyCollisionResult result) 
+    obstacle.onCollision = [&bangCount, &obstacle, &window, &text, &font](PhysicsBodyCollisionResult result) 
         {
             cout << "bang " << bangCount << endl;
             bangCount++; 
@@ -96,12 +105,22 @@ int main()
                 Time start(simpleClock.getElapsedTime());
                 Time simpleDelta(start - start); //start at 0
 
-                while (simpleDelta.asMilliseconds() < 2000) //this will turn the obstacle blue for 2s before closing
+                while (simpleDelta.asMilliseconds() < 2000) //this will turn the obstacle green for 2s before closing
                 {
                     Time currTime = simpleClock.getElapsedTime();
                     simpleDelta = currTime - start;
 
-                    obstacle.setFillColor(Color(20, 0, 255));
+                    obstacle.setFillColor(Color(20, 255, 0));
+
+                    text.setString("Objective Complete! Exiting now...");
+                    text.setFont(font);
+                    FloatRect textBounds = text.getGlobalBounds();
+                    float textLeft = 400 - (textBounds.width / 2);
+                    float textTop = 200 - (textBounds.height / 2);
+                    text.setPosition(Vector2f(textLeft, textTop));
+                    text.setFillColor(Color(20, 255, 0));
+
+                    window.draw(text);
                     window.draw(obstacle);
                     window.display();
                 }
