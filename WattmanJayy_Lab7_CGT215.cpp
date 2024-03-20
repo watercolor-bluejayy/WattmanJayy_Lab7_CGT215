@@ -29,6 +29,25 @@ int main()
     floor.setStatic(true); //makes sure that the floor doesn't move
     world.AddPhysicsBody(floor);
 
+    //make the walls and ceiling
+    PhysicsRectangle LWall;
+    LWall.setSize(Vector2f(20, 600));
+    LWall.setCenter(Vector2f(790, 300));
+    LWall.setStatic(true);
+    world.AddPhysicsBody(LWall);
+
+    PhysicsRectangle RWall;
+    RWall.setSize(Vector2f(20, 600));
+    RWall.setCenter(Vector2f(10, 300));
+    RWall.setStatic(true);
+    world.AddPhysicsBody(RWall);
+
+    PhysicsRectangle ceiling;
+    ceiling.setSize(Vector2f(800, 20));
+    ceiling.setCenter(Vector2f(400, 10));
+    ceiling.setStatic(true);
+    world.AddPhysicsBody(ceiling);
+
     int thudCount(0);
     floor.onCollision = [&thudCount](PhysicsBodyCollisionResult result) // use an anonymus function with a reference to thudCount
         {
@@ -52,6 +71,9 @@ int main()
         window.clear(Color(0, 0, 0));
         window.draw(ball); 
         window.draw(floor);
+        window.draw(LWall);
+        window.draw(RWall);
+        window.draw(ceiling);
         window.display();
     }
 }
